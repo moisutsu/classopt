@@ -13,7 +13,7 @@ class Opt:
 
 @ClassOpt
 class AdvancedUsageOpt:
-    without_hyphen: str = option(name_or_flags="without_hyphen")
+    positional_arguments: str = option(name_or_flags="positional_arguments")
     short_arg: str = option(name_or_flags="-s")
     default_int: int = option(default=3)
     store_true: bool = option(action="store_true")
@@ -34,7 +34,7 @@ class TestClassOpt(unittest.TestCase):
 
     def test_advanced_usage(self):
         set_args(
-            "without_hyphen",
+            "positional_arguments",
             "-s",
             "short_arg",
             "--store_true",
@@ -46,7 +46,7 @@ class TestClassOpt(unittest.TestCase):
 
         opt = AdvancedUsageOpt.from_args()
 
-        assert opt.without_hyphen == "without_hyphen"
+        assert opt.positional_arguments == "positional_arguments"
         assert opt.short_arg == "short_arg"
         assert opt.default_int == 3
         assert opt.store_true
