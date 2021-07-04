@@ -44,21 +44,18 @@ $ python main.py --arg_int 5 --arg_str hello
 ## Advanced Usage
 
 `ClassOpt` internally uses the standard libraries [dataclasses](https://docs.python.org/ja/3/library/dataclasses.html) and [argparse](https://docs.python.org/ja/3/library/argparse.html).
-And you can specify the argument of `argparse.ArgumentParser.add_argument` with the `metadata` of `dataclasses.field`
+And you can specify the argument of `argparse.ArgumentParser.add_argument` with the `option`.
 
 ```python
-from dataclasses import field
-from classopt import ClassOpt
+from classopt import ClassOpt, option
 
 @ClassOpt
 class Opt:
-    positional_arguments: str = field(
-        metadata={"name_or_flags": "positional_arguments"}
-    )
-    short_arg: str = field(metadata={"name_or_flags": "-s"})
-    default_int: int = field(metadata={"default": 3})
-    store_true: bool = field(metadata={"action": "store_true"})
-    nargs: list = field(metadata={"nargs": "+", "type": int})
+    without_hyphen: str = option(name_or_flags="without_hyphen")
+    short_arg: str = option(name_or_flags="-s")
+    default_int: int = option(default=3)
+    store_true: bool = option(action="store_true")
+    nargs: list = option(nargs="+", type=int)
 
 if __name__ == "__main__":
     opt = Opt.from_args()
