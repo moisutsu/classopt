@@ -51,7 +51,7 @@ from classopt import ClassOpt, option
 
 @ClassOpt
 class Opt:
-    without_hyphen: str = option(name_or_flags="without_hyphen")
+    positional_arguments: str = option(name_or_flags="positional_arguments")
     short_arg: str = option(name_or_flags="-s")
     default_int: int = option(default=3)
     store_true: bool = option(action="store_true")
