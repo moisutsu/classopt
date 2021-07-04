@@ -30,8 +30,8 @@ class Opt:
     arg_str: str
 
 if __name__ == "__main__":
-  opt = Opt.from_args()
-  print(opt.arg_int, opt.arg_str)
+    opt = Opt.from_args()
+    print(opt.arg_int, opt.arg_str)
 ```
 
 Run with command line arguments.
