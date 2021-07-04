@@ -1,8 +1,7 @@
 import unittest
 import sys
 
-from dataclasses import field
-from classopt import ClassOpt
+from classopt import ClassOpt, option
 
 
 @ClassOpt
@@ -14,11 +13,11 @@ class Opt:
 
 @ClassOpt
 class AdvancedUsageOpt:
-    without_hyphen: str = field(metadata={"name_or_flags": "without_hyphen"})
-    short_arg: str = field(metadata={"name_or_flags": "-s"})
-    default_int: int = field(metadata={"default": 3})
-    store_true: bool = field(metadata={"action": "store_true"})
-    nargs: list = field(metadata={"nargs": "+", "type": int})
+    without_hyphen: str = option(name_or_flags="without_hyphen")
+    short_arg: str = option(name_or_flags="-s")
+    default_int: int = option(default=3)
+    store_true: bool = option(action="store_true")
+    nargs: list = option(nargs="+", type=int)
 
 
 class TestClassOpt(unittest.TestCase):
