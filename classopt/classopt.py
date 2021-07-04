@@ -5,7 +5,6 @@ from dataclasses import dataclass
 def ClassOpt(cls):
     @classmethod
     def from_args(cls):
-        cls = cls
         parser = ArgumentParser()
 
         for arg_name, arg_field in cls.__dataclass_fields__.items():
