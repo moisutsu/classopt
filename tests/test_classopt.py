@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-from classopt import ClassOpt, option
+from classopt import ClassOpt, config
 
 
 @ClassOpt
@@ -13,11 +13,11 @@ class Opt:
 
 @ClassOpt()
 class AdvancedUsageOpt:
-    positional_arguments: str = option(name_or_flags="positional_arguments")
-    short_arg: str = option(name_or_flags="-s")
-    default_int: int = option(default=3)
-    store_true: bool = option(action="store_true")
-    nargs: list = option(nargs="+", type=int)
+    positional_arguments: str = config(name_or_flags="positional_arguments")
+    short_arg: str = config(name_or_flags="-s")
+    default_int: int = config(default=3)
+    store_true: bool = config(action="store_true")
+    nargs: list = config(nargs="+", type=int)
 
 
 class TestClassOpt(unittest.TestCase):

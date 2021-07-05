@@ -1,2 +1,2 @@
 from .classopt import ClassOpt
-from .option import option
+from .config import config

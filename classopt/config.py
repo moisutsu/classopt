@@ -2,7 +2,7 @@ from dataclasses import field
 from typing import Any, Optional, Union, Iterable, Tuple
 
 
-def option(
+def config(
     name_or_flags: Optional[str] = None,
     action: Optional[str] = None,
     nargs: Optional[Union[int, str]] = None,
