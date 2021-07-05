@@ -11,7 +11,7 @@ class Opt:
     arg_float: float
 
 
-@ClassOpt
+@ClassOpt()
 class AdvancedUsageOpt:
     positional_arguments: str = option(name_or_flags="positional_arguments")
     short_arg: str = option(name_or_flags="-s")

@@ -2,7 +2,17 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 
 
-def ClassOpt(cls):
+def ClassOpt(cls=None, *settings):
+    def wrap(cls):
+        return _process_class(cls)
+
+    if cls is None:
+        return wrap
+
+    return wrap(cls)
+
+
+def _process_class(cls):
     @classmethod
     def from_args(cls):
         parser = ArgumentParser()
