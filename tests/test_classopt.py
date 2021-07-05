@@ -13,11 +13,11 @@ class Opt:
 
 @ClassOpt()
 class AdvancedUsageOpt:
-    long_arg: str = config(name_or_flags="--long_arg")
-    s: str = config(name_or_flags="-s")
-    default_int: int = config(name_or_flags="--default_int", default=3)
-    store_true: bool = config(name_or_flags="--store_true", action="store_true")
-    nargs: list = config(name_or_flags="--nargs", nargs="+", type=int)
+    long_arg: str = config(long=True)
+    short_arg: str = config(long=True, short=True)
+    default_int: int = config(long=True, default=3)
+    store_true: bool = config(long=True, action="store_true")
+    nargs: list = config(long=True, nargs="+", type=int)
 
 
 @ClassOpt(default_long=True)
@@ -60,7 +60,7 @@ class TestClassOpt(unittest.TestCase):
         opt = AdvancedUsageOpt.from_args()
 
         assert opt.long_arg == "long_arg"
-        assert opt.s == "short_arg"
+        assert opt.short_arg == "short_arg"
         assert opt.default_int == 3
         assert opt.store_true
         assert opt.nargs == [1, 2, 3]

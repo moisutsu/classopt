@@ -21,16 +21,17 @@ def _process_class(cls, default_long: bool, default_short: bool):
             kwargs = {}
             kwargs.update(arg_field.metadata)
             kwargs["type"] = arg_field.type
+            kwargs.pop("long", None)
+            kwargs.pop("short", None)
 
             name_or_flags = []
-            if default_long:
+            if default_long or arg_field.metadata.get("long"):
                 name_or_flags.append(f"--{arg_name}")
-            if default_short:
-                name_or_flags.append(f"-{arg_name[0]}")
-
-            if "name_or_flags" in arg_field.metadata:
-                name_or_flags.append(arg_field.metadata["name_or_flags"])
-                kwargs.pop("name_or_flags")
+            if default_short or arg_field.metadata.get("short"):
+                if isinstance(arg_field.metadata.get("short"), str):
+                    name_or_flags.append(arg_field.metadata["short"])
+                else:
+                    name_or_flags.append(f"-{arg_name[0]}")
 
             if len(name_or_flags) == 0:
                 name_or_flags.append(arg_name)
