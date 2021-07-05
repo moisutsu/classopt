@@ -20,6 +20,12 @@ class AdvancedUsageOpt:
     nargs: list = config(name_or_flags="--nargs", nargs="+", type=int)
 
 
+@ClassOpt(default_long=True)
+class DefaultLongOpt:
+    arg1: int
+    arg2: str
+
+
 class TestClassOpt(unittest.TestCase):
     def test_classopt(self):
         set_args("5", "hello", "3.2")
@@ -52,6 +58,16 @@ class TestClassOpt(unittest.TestCase):
         assert opt.default_int == 3
         assert opt.store_true
         assert opt.nargs == [1, 2, 3]
+
+        del_args()
+
+    def test_default_long(self):
+        set_args("--arg1", "3", "--arg2", "hello")
+
+        opt = DefaultLongOpt.from_args()
+
+        assert opt.arg1 == 3
+        assert opt.arg2 == "hello"
 
         del_args()
 
