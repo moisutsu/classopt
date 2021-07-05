@@ -13,16 +13,16 @@ class Opt:
 
 @ClassOpt()
 class AdvancedUsageOpt:
-    positional_arguments: str = config(name_or_flags="positional_arguments")
-    short_arg: str = config(name_or_flags="-s")
-    default_int: int = config(default=3)
-    store_true: bool = config(action="store_true")
-    nargs: list = config(nargs="+", type=int)
+    long_arg: str = config(name_or_flags="--long_arg")
+    s: str = config(name_or_flags="-s")
+    default_int: int = config(name_or_flags="--default_int", default=3)
+    store_true: bool = config(name_or_flags="--store_true", action="store_true")
+    nargs: list = config(name_or_flags="--nargs", nargs="+", type=int)
 
 
 class TestClassOpt(unittest.TestCase):
     def test_classopt(self):
-        set_args("--arg_int", "5", "--arg_str", "hello", "--arg_float", "3.2")
+        set_args("5", "hello", "3.2")
 
         opt = Opt.from_args()
 
@@ -34,7 +34,8 @@ class TestClassOpt(unittest.TestCase):
 
     def test_advanced_usage(self):
         set_args(
-            "positional_arguments",
+            "--long_arg",
+            "long_arg",
             "-s",
             "short_arg",
             "--store_true",
@@ -46,8 +47,8 @@ class TestClassOpt(unittest.TestCase):
 
         opt = AdvancedUsageOpt.from_args()
 
-        assert opt.positional_arguments == "positional_arguments"
-        assert opt.short_arg == "short_arg"
+        assert opt.long_arg == "long_arg"
+        assert opt.s == "short_arg"
         assert opt.default_int == 3
         assert opt.store_true
         assert opt.nargs == [1, 2, 3]

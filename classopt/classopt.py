@@ -25,11 +25,9 @@ def _process_class(cls):
             name_or_flags = []
             if "name_or_flags" in arg_field.metadata:
                 name_or_flags.append(arg_field.metadata["name_or_flags"])
-                if arg_field.metadata["name_or_flags"].startswith("-"):
-                    name_or_flags.append(f"--{arg_name}")
                 kwargs.pop("name_or_flags")
             else:
-                name_or_flags.append(f"--{arg_name}")
+                name_or_flags.append(arg_name)
 
             if "action" in arg_field.metadata:
                 kwargs.pop("type")
