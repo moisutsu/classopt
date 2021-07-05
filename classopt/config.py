@@ -3,8 +3,8 @@ from typing import Any, Optional, Union, Iterable, Tuple
 
 
 def config(
-    long: bool = False,
-    short: Union[bool, str] = False,
+    long: Optional[bool] = None,
+    short: Optional[Union[bool, str]] = None,
     action: Optional[str] = None,
     nargs: Optional[Union[int, str]] = None,
     const: Any = None,
@@ -21,8 +21,8 @@ def config(
     metadata = {}
     metadata.update(kwargs)
 
-    metadata["long"] = long
-    metadata["short"] = short
+    assign_if_not_none(metadata, "long", long)
+    assign_if_not_none(metadata, "short", short)
     assign_if_not_none(metadata, "action", action)
     assign_if_not_none(metadata, "nargs", nargs)
     assign_if_not_none(metadata, "const", const)

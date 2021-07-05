@@ -23,6 +23,7 @@ class AdvancedUsageOpt:
 
 @ClassOpt(default_long=True)
 class DefaultLongOpt:
+    arg0: str = config(long=False)
     arg1: int
     arg2: str
 
@@ -72,10 +73,11 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
     def test_default_long(self):
-        set_args("--arg1", "3", "--arg2", "hello")
+        set_args("hogehoge", "--arg1", "3", "--arg2", "hello")
 
         opt = DefaultLongOpt.from_args()
 
+        assert opt.arg0 == "hogehoge"
         assert opt.arg1 == 3
         assert opt.arg2 == "hello"
 
