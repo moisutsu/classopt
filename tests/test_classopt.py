@@ -26,6 +26,12 @@ class DefaultLongOpt:
     arg2: str
 
 
+@ClassOpt(default_long=True, default_short=True)
+class DefaultShortOpt:
+    a_arg: int
+    b_arg: str
+
+
 class TestClassOpt(unittest.TestCase):
     def test_classopt(self):
         set_args("5", "hello", "3.2")
@@ -68,6 +74,16 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.arg1 == 3
         assert opt.arg2 == "hello"
+
+        del_args()
+
+    def test_default_short(self):
+        set_args("-a", "3", "-b", "hello")
+
+        opt = DefaultShortOpt.from_args()
+
+        assert opt.a_arg == 3
+        assert opt.b_arg == "hello"
 
         del_args()
 

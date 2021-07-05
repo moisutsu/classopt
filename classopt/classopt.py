@@ -2,9 +2,9 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 
 
-def ClassOpt(cls=None, default_long: bool = False):
+def ClassOpt(cls=None, default_long: bool = False, default_short: bool = False):
     def wrap(cls):
-        return _process_class(cls, default_long)
+        return _process_class(cls, default_long, default_short)
 
     if cls is None:
         return wrap
@@ -12,7 +12,7 @@ def ClassOpt(cls=None, default_long: bool = False):
     return wrap(cls)
 
 
-def _process_class(cls, default_long: bool):
+def _process_class(cls, default_long: bool, default_short: bool):
     @classmethod
     def from_args(cls):
         parser = ArgumentParser()
@@ -25,6 +25,8 @@ def _process_class(cls, default_long: bool):
             name_or_flags = []
             if default_long:
                 name_or_flags.append(f"--{arg_name}")
+            if default_short:
+                name_or_flags.append(f"-{arg_name[0]}")
 
             if "name_or_flags" in arg_field.metadata:
                 name_or_flags.append(arg_field.metadata["name_or_flags"])
