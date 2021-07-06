@@ -64,8 +64,8 @@ if __name__ == "__main__":
 ```
 
 ```bash
-$ python example.py example.py --count 5 --numbers 1 2 3 --debug
-Opt(file='example.py', count=5, numbers=[1, 2, 3], debug=True)
+$ python example.py example.txt --count 5 --numbers 1 2 3 --debug
+Opt(file='example.txt', count=5, numbers=[1, 2, 3], debug=True)
 ```
 
 ## Run tests
