@@ -1,4 +1,3 @@
-import types
 import typing
 from argparse import ArgumentParser
 from dataclasses import dataclass
@@ -50,8 +49,15 @@ def _process_class(cls, default_long: bool, default_short: bool):
                 kwargs.pop("type")
                 kwargs["action"] = "store_true"
 
+            generic_aliases = [typing._GenericAlias]
+            try:
+                from types import GenericAlias
+
+                generic_aliases.append(GenericAlias)
+            except ImportError:
+                pass
             if (
-                type(arg_field.type) in [types.GenericAlias, typing._GenericAlias]
+                type(arg_field.type) in generic_aliases
                 and arg_field.type.__origin__ == list
             ):
                 kwargs["type"] = arg_field.type.__args__[0]
