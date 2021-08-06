@@ -2,6 +2,7 @@ import unittest
 import sys
 
 from classopt import ClassOpt, config
+import classopt
 
 
 class TestClassOpt(unittest.TestCase):
@@ -86,6 +87,39 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.a_arg == 3
         assert opt.b_arg == "hello"
+
+        del_args()
+
+    def test_generic_alias(self):
+        from typing import List
+
+        @ClassOpt(default_long=True)
+        class Opt:
+            list_a: list[int] = config(nargs="+")
+            list_b: List[str] = config(nargs="*")
+            list_c: list[float]
+            list_d: list[int]
+
+        set_args(
+            "--list_a",
+            "3",
+            "2",
+            "1",
+            "--list_b",
+            "hello",
+            "world",
+            "--list_c",
+            "0.3",
+            "-11.2",
+            "--list_d",
+        )
+
+        opt = Opt.from_args()
+
+        assert opt.list_a == [3, 2, 1]
+        assert opt.list_b == ["hello", "world"]
+        assert opt.list_c == [0.3, -11.2]
+        assert opt.list_d == []
 
         del_args()
 

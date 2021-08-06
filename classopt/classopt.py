@@ -1,3 +1,5 @@
+import types
+import typing
 from argparse import ArgumentParser
 from dataclasses import dataclass
 
@@ -44,6 +46,14 @@ def _process_class(cls, default_long: bool, default_short: bool):
 
             if "action" in arg_field.metadata:
                 kwargs.pop("type")
+
+            if (
+                type(arg_field.type) in [types.GenericAlias, typing._GenericAlias]
+                and arg_field.type.__origin__ == list
+            ):
+                kwargs["type"] = arg_field.type.__args__[0]
+                if not "nargs" in arg_field.metadata:
+                    kwargs["nargs"] = "*"
 
             if "type" in arg_field.metadata:
                 kwargs["type"] = arg_field.metadata["type"]
