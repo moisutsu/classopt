@@ -97,29 +97,28 @@ class TestClassOpt(unittest.TestCase):
         class Opt:
             list_a: list[int] = config(nargs="+")
             list_b: List[str] = config(nargs="*")
-            list_c: list[float]
-            list_d: list[int]
 
-        set_args(
-            "--list_a",
-            "3",
-            "2",
-            "1",
-            "--list_b",
-            "hello",
-            "world",
-            "--list_c",
-            "0.3",
-            "-11.2",
-            "--list_d",
-        )
+        set_args("--list_a", "3", "2", "1", "--list_b", "hello", "world")
 
         opt = Opt.from_args()
 
         assert opt.list_a == [3, 2, 1]
         assert opt.list_b == ["hello", "world"]
-        assert opt.list_c == [0.3, -11.2]
-        assert opt.list_d == []
+
+        del_args()
+
+    def test_default_value(self):
+        @ClassOpt(default_long=True)
+        class Opt:
+            numbers: list[int]
+            flag: bool
+
+        set_args("--numbers", "1", "2", "3", "--flag")
+
+        opt = Opt.from_args()
+
+        assert opt.numbers == [1, 2, 3]
+        assert opt.flag
 
         del_args()
 

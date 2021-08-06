@@ -46,6 +46,9 @@ def _process_class(cls, default_long: bool, default_short: bool):
 
             if "action" in arg_field.metadata:
                 kwargs.pop("type")
+            elif arg_field.type == bool:
+                kwargs.pop("type")
+                kwargs["action"] = "store_true"
 
             if (
                 type(arg_field.type) in [types.GenericAlias, typing._GenericAlias]
