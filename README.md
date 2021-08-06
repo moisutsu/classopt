@@ -76,6 +76,7 @@ class Opt:
     # `long=False` overrides `default_long=True`
     file: str = config(long=False)
     # equivalent to `numbers: list = config(nargs="*", type=int)`
+    # and `numbers: typing.List[int]`
     numbers: list[int]
     # equivalent to `flag: bool = config(action="store_true")`
     flag: bool
