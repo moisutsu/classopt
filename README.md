@@ -22,14 +22,14 @@ pip install classopt
 Import `ClassOpt` and define the Opt class with decorator.
 
 ```python
-from classopt import ClassOpt, config
+from classopt import ClassOpt
 
-@ClassOpt
+@ClassOpt(default_long=True)
 class Opt:
     file: str
-    count: int = config(long=True)
-    numbers: list = config(long=True, short=True, nargs="+", type=int)
-    debug: bool = config(long=True, short=True, action="store_true")
+    count: int
+    numbers: list[int]
+    flag: bool
 
 if __name__ == "__main__":
     opt = Opt.from_args()
@@ -40,23 +40,22 @@ if __name__ == "__main__":
 Run with command line arguments.
 
 ```bash
-$ python example.py example.txt --count 5 -n 1 2 3 --debug
-Opt(file='example.txt', count=5, numbers=[1, 2, 3], debug=True)
+$ python example.py --file example.txt --count 5 --numbers 1 2 3 --flag
+Opt(file='example.txt', count=5, numbers=[1, 2, 3], flag=True)
 example.txt
 ```
 You can specify most of the arguments to [argparse.ArgumentParser.add_argument](https://docs.python.org/ja/3/library/argparse.html#argparse.ArgumentParser.add_argument) in `config` (except name_or_flags).
 
-You can also use the long option by default.
 
 ```python
 from classopt import ClassOpt, config
 
-@ClassOpt(default_long=True)
+@ClassOpt
 class Opt:
-    file: str = config(long=False)
-    count: int
-    numbers: list = config(nargs="+", type=int)
-    debug: bool = config(action="store_true")
+    file: str
+    count: int = config(long=True)
+    numbers: list = config(long=True, short=True, nargs="+", type=int)
+    flag: bool = config(long=True, action="store_false")
 
 if __name__ == "__main__":
     opt = Opt.from_args()
@@ -64,8 +63,22 @@ if __name__ == "__main__":
 ```
 
 ```bash
-$ python example.py example.txt --count 5 --numbers 1 2 3 --debug
-Opt(file='example.txt', count=5, numbers=[1, 2, 3], debug=True)
+$ python example.py example.txt --count 5 -n 1 2 3 --flag
+Opt(file='example.txt', count=5, numbers=[1, 2, 3], flag=False)
+```
+
+Some details
+```python
+# `default_long=True` is equivalent to `config(long=True)' for all members
+# Similarly, you can do `default_short=True`
+@ClassOpt(default_long=True)
+class Opt:
+    # `long=False` overrides `default_long=True`
+    file: str = config(long=False)
+    # equivalent to `numbers: list = config(nargs="*", type=int)`
+    numbers: list[int]
+    # equivalent to `flag: bool = config(action="store_true")`
+    flag: bool
 ```
 
 ## Run tests
