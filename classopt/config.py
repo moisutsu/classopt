@@ -1,4 +1,4 @@
-from dataclasses import field
+from dataclasses import field, Field
 from typing import Any, Optional, Union, Iterable, Tuple
 
 
@@ -17,7 +17,7 @@ def config(
     dest: Optional[str] = None,
     version: Optional[str] = None,
     **kwargs: Any,
-):
+) -> Field:
     metadata = {}
     metadata.update(kwargs)
 
