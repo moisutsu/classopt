@@ -19,12 +19,14 @@ pip install classopt
 
 ## Usage
 
-Import `ClassOpt` and define the Opt class with decorator.
+### With decorator
+
+Import `classopt` and define the Opt class with decorator.
 
 ```python
-from classopt import ClassOpt
+from classopt import classopt
 
-@ClassOpt(default_long=True)
+@classopt(default_long=True)
 class Opt:
     file: str
     count: int
@@ -48,9 +50,9 @@ You can specify most of the arguments to [argparse.ArgumentParser.add_argument](
 
 
 ```python
-from classopt import ClassOpt, config
+from classopt import classopt, config
 
-@ClassOpt
+@classopt
 class Opt:
     file: str
     count: int = config(long=True)
@@ -71,7 +73,7 @@ Some details
 ```python
 # `default_long=True` is equivalent to `config(long=True)' for all members
 # Similarly, you can do `default_short=True`
-@ClassOpt(default_long=True)
+@classopt(default_long=True)
 class Opt:
     # `long=False` overrides `default_long=True`
     file: str = config(long=False)
@@ -80,6 +82,33 @@ class Opt:
     numbers: list[int]
     # equivalent to `flag: bool = config(action="store_true")`
     flag: bool
+```
+
+### With inheritance
+
+Import `ClassOpt` and define the Opt that inherits from `ClassOpt`.
+
+```python
+from classopt import ClassOpt, config
+
+class Opt(ClassOpt):
+    file: str
+    count: int = config(long=True)
+    numbers: list[int] = config(long=True, short="-c")
+    flag: bool = config(long=True)
+
+if __name__ == "__main__":
+    opt = Opt.from_args()
+    print(opt)
+    print(opt.file)
+```
+
+Run with command line arguments.
+
+```bash
+$ python example.py example.txt --count 5 -c 1 2 3 --flag
+Opt(file='example.txt', count=5, numbers=[1, 2, 3], flag=True)
+example.txt
 ```
 
 ## Run tests
