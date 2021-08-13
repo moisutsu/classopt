@@ -1,13 +1,12 @@
 import unittest
 import sys
 
-from classopt import ClassOpt, config
-import classopt
+from classopt import classopt, config
 
 
 class TestClassOpt(unittest.TestCase):
     def test_classopt(self):
-        @ClassOpt
+        @classopt
         class Opt:
             arg_int: int
             arg_str: str
@@ -24,7 +23,7 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
     def test_advanced_usage(self):
-        @ClassOpt()
+        @classopt()
         class Opt:
             long_arg: str = config(long=True)
             short_arg1: str = config(long=True, short=True)
@@ -59,7 +58,7 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
     def test_default_long(self):
-        @ClassOpt(default_long=True)
+        @classopt(default_long=True)
         class Opt:
             arg0: str = config(long=False)
             arg1: int
@@ -76,7 +75,7 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
     def test_default_short(self):
-        @ClassOpt(default_long=True, default_short=True)
+        @classopt(default_long=True, default_short=True)
         class Opt:
             a_arg: int
             b_arg: str
@@ -93,7 +92,7 @@ class TestClassOpt(unittest.TestCase):
     def test_generic_alias(self):
         from typing import List
 
-        @ClassOpt(default_long=True)
+        @classopt(default_long=True)
         class Opt:
             list_a: list[int] = config(nargs="+")
             list_b: List[str] = config(nargs="*")
@@ -108,7 +107,7 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
     def test_default_value(self):
-        @ClassOpt(default_long=True)
+        @classopt(default_long=True)
         class Opt:
             numbers: list[int]
             flag: bool

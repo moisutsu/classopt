@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 
 
-def ClassOpt(cls=None, default_long: bool = False, default_short: bool = False):
+def classopt(cls=None, default_long: bool = False, default_short: bool = False):
     def wrap(cls):
         return _process_class(cls, default_long, default_short)
 
