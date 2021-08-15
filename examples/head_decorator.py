@@ -1,16 +1,12 @@
 from pathlib import Path
-from classopt import ClassOpt, config
+from classopt import classopt, config
 
 
-@ClassOpt
+@classopt(default_long=True, default_short=True)
 class Opt:
-    input_file: Path
-    lines: int = config(
-        long=True, short="-n", default=10, help="print the first LINES lines"
-    )
-    index: bool = config(
-        long=True, short=True, action="store_true", help="number all output lines"
-    )
+    input_file: Path = config(long=False, short=False)
+    lines: int = config(short="-n", default=10, help="print the first LINES lines")
+    index: bool = config(action="store_true", help="number all output lines")
 
 
 def main(opt: Opt):

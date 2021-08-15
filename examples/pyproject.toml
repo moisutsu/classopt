@@ -6,7 +6,7 @@ authors = ["moisutsu <moisutsu@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-classopt = "^0.1.4"
+classopt = "^0.1.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
