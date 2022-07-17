@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     
     class _ClassOptMeta(type[_C]):
         @classmethod
-        def from_args(cls) -> Type[_C]:
+        def from_args(cls) -> _C:
             ...
 
 @overload
