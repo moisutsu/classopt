@@ -123,6 +123,7 @@ class TestClassOpt(unittest.TestCase):
 
 
 def set_args(*args):
+    del_args()  # otherwise tests fail with e.g. "pytest -s"
     for arg in args:
         sys.argv.append(arg)
 
