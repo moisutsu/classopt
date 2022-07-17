@@ -6,7 +6,7 @@ from classopt import classopt, config
 class Opt:
     input_file: Path = config(long=False, short=False)
     lines: int = config(short="-n", default=10, help="print the first LINES lines")
-    index: bool = config(action="store_true", help="number all output lines")
+    index: bool = config(help="number all output lines")
 
 
 def main(opt: Opt):
