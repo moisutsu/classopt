@@ -4,20 +4,21 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 
 if TYPE_CHECKING:
-    from typing import Literal, Callable, TypeVar, Type
+    from typing import Literal, Callable, TypeVar, Type, Union, Generic
     _C = TypeVar("_C")
+    _T = TypeVar("_T")
     
-    class _ClassOptMeta(type[_C]):
+    class _ClassOptGeneric(Generic[_T]):
         @classmethod
-        def from_args(cls) -> _C:
+        def from_args(cls) -> _T:
             ...
 
 @overload
 def classopt(
-    cls: "Type[_C]",
+    cls: Type[_C],
     default_long: bool = False,
     default_short: bool = False,
-) -> "_ClassOptMeta[_C]":
+) -> Union[Type[_C], Type[_ClassOptGeneric[_C]]]:
     ...
 
 @overload
@@ -25,7 +26,7 @@ def classopt(
     cls: "Literal[None]" = None,
     default_long: bool = False,
     default_short: bool = False,
-) -> "Callable[[Type[_C]], _ClassOptMeta[_C]]":
+) -> Callable[[Type[_C]], Union[Type[_C], Type[_ClassOptGeneric[_C]]]]:
     ...
 
 def classopt(cls=None, default_long=False, default_short=False):
