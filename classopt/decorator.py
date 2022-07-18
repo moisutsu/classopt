@@ -15,10 +15,10 @@ if TYPE_CHECKING:
 
 @overload
 def classopt(
-    cls: Type[_C],
+    cls: "Type[_C]",
     default_long: bool = False,
     default_short: bool = False,
-) -> Union[Type[_C], Type[_ClassOptGeneric[_C]]]:
+) -> "Union[Type[_C], Type[_ClassOptGeneric[_C]]]":
     ...
 
 @overload
@@ -26,7 +26,7 @@ def classopt(
     cls: "Literal[None]" = None,
     default_long: bool = False,
     default_short: bool = False,
-) -> Callable[[Type[_C]], Union[Type[_C], Type[_ClassOptGeneric[_C]]]]:
+) -> "Callable[[Type[_C]], Union[Type[_C], Type[_ClassOptGeneric[_C]]]]":
     ...
 
 def classopt(cls=None, default_long=False, default_short=False):
