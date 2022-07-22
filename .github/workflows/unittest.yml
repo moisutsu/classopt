@@ -28,4 +28,4 @@ jobs:
         run: poetry install --no-interaction
 
       - name: Run test
-        run: portry run pytest
+        run: poetry run pytest
