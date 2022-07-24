@@ -1,4 +1,4 @@
-from dataclasses import field, Field
+from dataclasses import field, Field, MISSING
 from typing import Any, Optional, Union, Iterable, Tuple
 
 
@@ -35,7 +35,18 @@ def config(
     assign_if_not_none(metadata, "dest", dest)
     assign_if_not_none(metadata, "version", version)
 
-    return field(metadata=metadata)
+    # to avoid errors like below:
+    # ValueError: mutable default <class 'list'> for field hoge is not allowed: use default_factory
+    if isinstance(default, (list, dict, set)):
+        return field(
+            default_factory=lambda: default,
+            metadata=metadata,
+        )
+    else:
+        return field(
+            default=default,
+            metadata=metadata,
+        )
 
 
 def assign_if_not_none(d: dict, key: str, value: Any):

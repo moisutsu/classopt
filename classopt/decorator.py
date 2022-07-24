@@ -1,7 +1,7 @@
 import typing
 from typing import TYPE_CHECKING, overload
 from argparse import ArgumentParser
-from dataclasses import dataclass
+from dataclasses import dataclass, MISSING
 
 if TYPE_CHECKING:
     from typing import Literal, Callable, TypeVar, Type, Union, Generic
@@ -74,6 +74,11 @@ def _process_class(cls, default_long: bool, default_short: bool):
             elif arg_field.type == bool:
                 kwargs.pop("type")
                 kwargs["action"] = "store_true"
+
+            if arg_field.default != MISSING:
+                kwargs["default"] = arg_field.type(arg_field.default)
+            elif arg_field.default_factory != MISSING:
+                kwargs["default"] = arg_field.type(arg_field.default_factory())
 
             generic_aliases = [typing._GenericAlias]
             try:
