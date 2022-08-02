@@ -1,6 +1,8 @@
-from typing import List
-import unittest
 import sys
+import unittest
+from typing import List
+
+import pytest
 
 from classopt import classopt, config
 
@@ -94,6 +96,25 @@ class TestClassOpt(unittest.TestCase):
         @classopt(default_long=True)
         class Opt:
             list_a: List[int] = config(nargs="+")
+            list_b: List[str] = config(nargs="*")
+
+        set_args("--list_a", "3", "2", "1", "--list_b", "hello", "world")
+
+        opt = Opt.from_args()
+
+        assert opt.list_a == [3, 2, 1]
+        assert opt.list_b == ["hello", "world"]
+
+        del_args()
+
+    @pytest.mark.skipif(
+        sys.version_info < (3, 9),
+        reason="These version does not support `list` type with subscription.",
+    )
+    def test_generic_alias_for_python3_9_or_later(self):
+        @classopt(default_long=True)
+        class Opt:
+            list_a: list[int] = config(nargs="+")
             list_b: List[str] = config(nargs="*")
 
         set_args("--list_a", "3", "2", "1", "--list_b", "hello", "world")
