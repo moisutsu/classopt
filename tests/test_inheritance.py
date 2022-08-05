@@ -59,7 +59,7 @@ class TestClassOpt(unittest.TestCase):
         from typing import List
 
         class Opt(ClassOpt):
-            list_a: list[int] = config(long=True, nargs="+")
+            list_a: List[int] = config(long=True, nargs="+")
             list_b: List[str] = config(long=True, nargs="*")
 
         set_args("--list_a", "3", "2", "1", "--list_b", "hello", "world")
@@ -72,8 +72,9 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
     def test_default_value(self):
+        from typing import List
         class Opt(ClassOpt):
-            numbers: list[int] = config(long=True)
+            numbers: List[int] = config(long=True)
             flag: bool = config(long=True)
 
         set_args("--numbers", "1", "2", "3", "--flag")
@@ -84,6 +85,42 @@ class TestClassOpt(unittest.TestCase):
         assert opt.flag
 
         del_args()
+
+    def test_external_parser(self):
+        from argparse import ArgumentParser
+        class userArgumentParserException(Exception):
+            pass
+
+        class userArgumentParser(ArgumentParser):
+            def error(self,message):
+                raise userArgumentParserException()
+
+        class Opt(ClassOpt):
+            arg_int: int
+            arg_str: str
+            arg_float: float
+
+            @classmethod
+            def _parser_factory(cls) -> ArgumentParser:
+                return userArgumentParser()
+
+        set_args("5", "hello", "3.2")
+
+        opt = Opt.from_args()
+
+        assert opt.arg_int == 5
+        assert opt.arg_str == "hello"
+        assert opt.arg_float == 3.2
+
+        del_args()
+
+        set_args("5", "hello")
+
+        with self.assertRaises(userArgumentParserException):
+            opt = Opt.from_args()
+
+        del_args()
+
 
 
 def set_args(*args):
