@@ -94,7 +94,7 @@ class TestClassOpt(unittest.TestCase):
 
         @classopt(default_long=True)
         class Opt:
-            list_a: list[int] = config(nargs="+")
+            list_a: List[int] = config(nargs="+")
             list_b: List[str] = config(nargs="*")
 
         set_args("--list_a", "3", "2", "1", "--list_b", "hello", "world")
@@ -107,9 +107,10 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
     def test_default_value(self):
+        from typing import List
         @classopt(default_long=True)
         class Opt:
-            numbers: list[int]
+            numbers: List[int]
             flag: bool
 
         set_args("--numbers", "1", "2", "3", "--flag")
