@@ -29,9 +29,9 @@ def classopt(
 ) -> "Callable[[Type[_C]], Union[Type[_C], Type[_ClassOptGeneric[_C]]]]":
     ...
 
-def classopt(cls=None, default_long=False, default_short=False):
+def classopt(cls=None, default_long=False, default_short=False,parser=None):
     def wrap(cls):
-        return _process_class(cls, default_long, default_short)
+        return _process_class(cls, default_long, default_short, parser)
 
     if cls is None:
         return wrap
@@ -39,10 +39,10 @@ def classopt(cls=None, default_long=False, default_short=False):
     return wrap(cls)
 
 
-def _process_class(cls, default_long: bool, default_short: bool):
+def _process_class(cls, default_long: bool, default_short: bool, external_parser: ArgumentParser):
     @classmethod
     def from_args(cls,*args):
-        parser = ArgumentParser()
+        parser = external_parser if external_parser is not None else ArgumentParser()
 
         for arg_name, arg_field in cls.__dataclass_fields__.items():
             kwargs = {}
