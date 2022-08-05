@@ -41,8 +41,7 @@ def classopt(cls=None, default_long=False, default_short=False,parser=None):
 
 def _process_class(cls, default_long: bool, default_short: bool, external_parser: ArgumentParser):
     @classmethod
-    def from_args(cls):
-        # parser = ArgumentParser()
+    def from_args(cls,*args):
         parser = external_parser if external_parser is not None else ArgumentParser()
 
         for arg_name, arg_field in cls.__dataclass_fields__.items():
@@ -96,8 +95,9 @@ def _process_class(cls, default_long: bool, default_short: bool, external_parser
 
             parser.add_argument(*name_or_flags, **kwargs)
 
-        args = parser.parse_args()
-        return cls(**vars(args))
+        args_in = args if len(args) != 0 else None
+        ns = parser.parse_args(args=args_in)
+        return cls(**vars(ns))
 
     setattr(cls, "from_args", from_args)
 
