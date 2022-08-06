@@ -50,7 +50,6 @@ def _process_class(
 ):
     @classmethod
     def from_args(cls):
-        # parser = ArgumentParser()
         parser = external_parser if external_parser is not None else ArgumentParser()
 
         for arg_name, arg_field in cls.__dataclass_fields__.items():
