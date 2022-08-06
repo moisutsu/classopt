@@ -83,12 +83,14 @@ def _process_class(
                 kwargs.pop("type")
                 kwargs["action"] = "store_true"
 
-            if arg_field.default == MISSING and arg_field.default_factory == MISSING:
+            if (
+                arg_field.default == MISSING and arg_field.default_factory == MISSING
+            ) or arg_field.default is None:
                 kwargs["default"] = None
             elif arg_field.default != MISSING:
-                kwargs["default"] = arg_field.default
+                kwargs["default"] = arg_field.type(arg_field.default)
             elif arg_field.default_factory != MISSING:
-                kwargs["default"] = arg_field.default_factory()
+                kwargs["default"] = arg_field.type(arg_field.default_factory())
 
             generic_aliases = [typing._GenericAlias]
             try:
