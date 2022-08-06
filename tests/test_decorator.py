@@ -175,6 +175,29 @@ class TestClassOpt(unittest.TestCase):
 
         del_args()
 
+    def test_simple_default_value_passing(self):
+        @classopt(default_long=True)
+        class Opt:
+            arg0: int = 3
+            arg1: list = ["hello", "world"]
+            arg2: int
+            arg3: int = config(default=5)
+            arg4: int = config(default=[1, 2, 3])
+            arg5: str
+
+        set_args("--arg5", "hello")
+
+        opt = Opt.from_args()
+
+        assert opt.arg0 == 3
+        assert opt.arg1 == ["hello", "world"]
+        assert opt.arg2 == None
+        assert opt.arg3 == 5
+        assert opt.arg4 == [1, 2, 3]
+        assert opt.arg5 == "hello"
+
+        del_args()
+
 
 def set_args(*args):
     del_args()  # otherwise tests fail with e.g. "pytest -s"
