@@ -1,10 +1,10 @@
 import typing
-from typing import TYPE_CHECKING, overload
 from argparse import ArgumentParser
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
+from typing import TYPE_CHECKING, overload
 
 if TYPE_CHECKING:
-    from typing import Literal, Callable, TypeVar, Type, Union, Generic
+    from typing import Callable, Generic, Literal, Type, TypeVar, Union
 
     _C = TypeVar("_C")
     _T = TypeVar("_T")
@@ -43,7 +43,9 @@ def classopt(cls=None, default_long=False, default_short=False, parser=None):
     return wrap(cls)
 
 
-def _process_class(cls, default_long: bool, default_short: bool, external_parser: ArgumentParser):
+def _process_class(
+    cls, default_long: bool, default_short: bool, external_parser: ArgumentParser
+):
     @classmethod
     def from_args(cls):
         # parser = ArgumentParser()

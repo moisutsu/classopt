@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from classopt import ClassOpt, config
 
 

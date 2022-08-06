@@ -1,6 +1,6 @@
-from typing import List
-import unittest
 import sys
+import unittest
+from typing import List
 
 from classopt import ClassOpt, config
 
@@ -72,6 +72,7 @@ class TestClassOpt(unittest.TestCase):
 
     def test_default_value(self):
         from typing import List
+
         class Opt(ClassOpt):
             numbers: List[int] = config(long=True)
             flag: bool = config(long=True)
@@ -87,11 +88,12 @@ class TestClassOpt(unittest.TestCase):
 
     def test_external_parser(self):
         from argparse import ArgumentParser
+
         class userArgumentParserException(Exception):
             pass
 
         class userArgumentParser(ArgumentParser):
-            def error(self,message):
+            def error(self, message):
                 raise userArgumentParserException()
 
         class Opt(ClassOpt):
@@ -119,7 +121,6 @@ class TestClassOpt(unittest.TestCase):
             opt = Opt.from_args()
 
         del_args()
-
 
 
 def set_args(*args):

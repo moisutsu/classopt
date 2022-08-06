@@ -1,7 +1,7 @@
 import typing
-from typing import TypeVar
 from argparse import ArgumentParser
 from dataclasses import dataclass
+from typing import TypeVar
 
 T = TypeVar("T")
 

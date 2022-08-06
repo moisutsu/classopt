@@ -1,6 +1,7 @@
 from classopt import classopt, config
 from pathlib import Path
 
+
 @classopt(default_long=True, default_short=True)
 class Opt:
     a: int = 0
