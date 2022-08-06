@@ -1,7 +1,9 @@
 import typing
 from argparse import ArgumentParser
-from dataclasses import MISSING, dataclass
+from dataclasses import MISSING, Field, dataclass
 from typing import TYPE_CHECKING, overload
+
+from classopt import config
 
 if TYPE_CHECKING:
     from typing import Callable, Generic, Literal, Type, TypeVar, Union
@@ -82,10 +84,12 @@ def _process_class(
                 kwargs.pop("type")
                 kwargs["action"] = "store_true"
 
-            if arg_field.default != MISSING:
-                kwargs["default"] = arg_field.type(arg_field.default)
+            if arg_field.default == MISSING and arg_field.default_factory == MISSING:
+                kwargs["default"] = None
+            elif arg_field.default != MISSING:
+                kwargs["default"] = arg_field.default
             elif arg_field.default_factory != MISSING:
-                kwargs["default"] = arg_field.type(arg_field.default_factory())
+                kwargs["default"] = arg_field.default_factory()
 
             generic_aliases = [typing._GenericAlias]
             try:
@@ -109,6 +113,12 @@ def _process_class(
 
         args = parser.parse_args()
         return cls(**vars(args))
+
+    for arg_name in cls.__annotations__.keys():
+        if not hasattr(cls, arg_name):
+            setattr(cls, arg_name, None)
+        elif not isinstance(getattr(cls, arg_name), Field):
+            setattr(cls, arg_name, config(default=getattr(cls, arg_name)))
 
     setattr(cls, "from_args", from_args)
 

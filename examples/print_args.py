@@ -1,5 +1,6 @@
-from classopt import classopt, config
 from pathlib import Path
+
+from classopt import classopt, config
 
 
 @classopt(default_long=True, default_short=True)
