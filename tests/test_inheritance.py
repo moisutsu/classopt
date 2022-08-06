@@ -1,3 +1,4 @@
+from typing import List
 import unittest
 import sys
 
@@ -28,7 +29,7 @@ class TestClassOpt(unittest.TestCase):
             short_arg2: str = config(long=True, short="-x")
             default_int: int = config(long=True, default=3)
             store_true: bool = config(long=True, action="store_true")
-            nargs: list = config(long=True, nargs="+", type=int)
+            nargs: List[int] = config(long=True, nargs="+", type=int)
 
         set_args(
             "--long_arg",
@@ -56,10 +57,8 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
     def test_generic_alias(self):
-        from typing import List
-
         class Opt(ClassOpt):
-            list_a: list[int] = config(long=True, nargs="+")
+            list_a: List[int] = config(long=True, nargs="+")
             list_b: List[str] = config(long=True, nargs="*")
 
         set_args("--list_a", "3", "2", "1", "--list_b", "hello", "world")
@@ -73,7 +72,7 @@ class TestClassOpt(unittest.TestCase):
 
     def test_default_value(self):
         class Opt(ClassOpt):
-            numbers: list[int] = config(long=True)
+            numbers: List[int] = config(long=True)
             flag: bool = config(long=True)
 
         set_args("--numbers", "1", "2", "3", "--flag")
