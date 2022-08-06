@@ -8,8 +8,12 @@ T = TypeVar("T")
 
 class ClassOpt:
     @classmethod
+    def _parser_factory(cls: T) -> ArgumentParser:
+        return ArgumentParser()
+
+    @classmethod
     def from_args(cls: T) -> T:
-        parser = ArgumentParser()
+        parser = cls._parser_factory()
 
         for arg_name, arg_type in cls.__annotations__.items():
             kwargs = {}

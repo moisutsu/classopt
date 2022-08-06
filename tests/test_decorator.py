@@ -114,7 +114,7 @@ class TestClassOpt(unittest.TestCase):
     def test_generic_alias_for_python3_9_or_later(self):
         @classopt(default_long=True)
         class Opt:
-            list_a: list[int] = config(nargs="+")
+            list_a: List[int] = config(nargs="+")
             list_b: List[str] = config(nargs="*")
 
         set_args("--list_a", "3", "2", "1", "--list_b", "hello", "world")
@@ -127,6 +127,7 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
     def test_default_value(self):
+        from typing import List
         @classopt(default_long=True)
         class Opt:
             numbers: List[int]
@@ -140,6 +141,39 @@ class TestClassOpt(unittest.TestCase):
         assert opt.flag
 
         del_args()
+
+    def test_external_parser(self):
+        from argparse import ArgumentParser
+        class userArgumentParserException(Exception):
+            pass
+
+        class userArgumentParser(ArgumentParser):
+            def error(self,message):
+                raise userArgumentParserException()
+
+        @classopt(parser=userArgumentParser())
+        class Opt:
+            arg_int: int
+            arg_str: str
+            arg_float: float
+
+        set_args("5", "hello", "3.2")
+
+        opt = Opt.from_args()
+
+        assert opt.arg_int == 5
+        assert opt.arg_str == "hello"
+        assert opt.arg_float == 3.2
+
+        del_args()
+
+        set_args("5", "hello")
+
+        with self.assertRaises(userArgumentParserException):
+            opt = Opt.from_args()
+
+        del_args()
+
 
 
 def set_args(*args):
