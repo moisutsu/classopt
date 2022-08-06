@@ -113,8 +113,8 @@ class TestClassOpt(unittest.TestCase):
     def test_generic_alias_for_python3_9_or_later(self):
         @classopt(default_long=True)
         class Opt:
-            list_a: List[int] = config(nargs="+")
-            list_b: List[str] = config(nargs="*")
+            list_a: list[int] = config(nargs="+")
+            list_b: list[str] = config(nargs="*")
 
         set_args("--list_a", "3", "2", "1", "--list_b", "hello", "world")
 
@@ -182,7 +182,7 @@ class TestClassOpt(unittest.TestCase):
             arg1: list = ["hello", "world"]
             arg2: int
             arg3: int = config(default=5)
-            arg4: int = config(default=[1, 2, 3])
+            arg4: list = config(default=[1, 2, 3])
             arg5: str
 
         set_args("--arg5", "hello")
