@@ -5,13 +5,15 @@ from dataclasses import dataclass
 
 if TYPE_CHECKING:
     from typing import Literal, Callable, TypeVar, Type, Union, Generic
+
     _C = TypeVar("_C")
     _T = TypeVar("_T")
-    
+
     class _ClassOptGeneric(Generic[_T]):
         @classmethod
         def from_args(cls) -> _T:
             ...
+
 
 @overload
 def classopt(
@@ -21,6 +23,7 @@ def classopt(
 ) -> "Union[Type[_C], Type[_ClassOptGeneric[_C]]]":
     ...
 
+
 @overload
 def classopt(
     cls: "Literal[None]" = None,
@@ -29,7 +32,8 @@ def classopt(
 ) -> "Callable[[Type[_C]], Union[Type[_C], Type[_ClassOptGeneric[_C]]]]":
     ...
 
-def classopt(cls=None, default_long=False, default_short=False,parser=None):
+
+def classopt(cls=None, default_long=False, default_short=False, parser=None):
     def wrap(cls):
         return _process_class(cls, default_long, default_short, parser)
 
