@@ -198,6 +198,21 @@ class TestClassOpt(unittest.TestCase):
 
         del_args()
 
+    def test_convert_default_value_type_to_specified_type(self):
+        from pathlib import Path
+
+        @classopt(default_long=True)
+        class Opt:
+            arg0: Path = "test.py"
+
+        set_args()
+
+        opt = Opt.from_args()
+
+        assert opt.arg0 == Path("test.py")
+
+        del_args()
+
 
 def set_args(*args):
     del_args()  # otherwise tests fail with e.g. "pytest -s"
