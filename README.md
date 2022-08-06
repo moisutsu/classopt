@@ -19,7 +19,6 @@ pip install classopt
 
 ## Usage
 
-### With decorator
 
 Import `classopt` and define the Opt class with decorator.
 
@@ -29,7 +28,7 @@ from classopt import classopt
 @classopt(default_long=True)
 class Opt:
     file: str
-    count: int
+    count: int = 3
     numbers: list[int]
     flag: bool
 
@@ -42,8 +41,8 @@ if __name__ == "__main__":
 Run with command line arguments.
 
 ```bash
-$ python example.py --file example.txt --count 5 --numbers 1 2 3 --flag
-Opt(file='example.txt', count=5, numbers=[1, 2, 3], flag=True)
+$ python example.py --file example.txt --numbers 1 2 3 --flag
+Opt(file='example.txt', count=3, numbers=[1, 2, 3], flag=True)
 example.txt
 ```
 You can specify most of the arguments to [argparse.ArgumentParser.add_argument](https://docs.python.org/ja/3/library/argparse.html#argparse.ArgumentParser.add_argument) in `config` (except name_or_flags).
@@ -86,9 +85,9 @@ class Opt:
     flag: bool
 ```
 
-### With inheritance
+### Other Way
 
-Import `ClassOpt` and define the Opt that inherits from `ClassOpt`.
+You can also define an argument parser by inheriting from `ClassOpt`.
 
 ```python
 from classopt import ClassOpt, config
@@ -112,6 +111,9 @@ $ python example.py example.txt --count 5 -c 1 2 3 --flag
 Opt(file='example.txt', count=5, numbers=[1, 2, 3], flag=True)
 example.txt
 ```
+
+The inherited method does not support some features and may disappear in the future.
+So we recommend the decorator method.
 
 ## Run tests
 
