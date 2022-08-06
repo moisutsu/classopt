@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "classopt"
-version = "0.1.7"
+version = "0.1.9"
 description = "Arguments parser with class for Python, inspired by StructOpt"
 authors = ["moisutsu <moisutsu@gmail.com>"]
 readme = "README.md"
