@@ -49,7 +49,7 @@ def _process_class(
     cls, default_long: bool, default_short: bool, external_parser: ArgumentParser
 ):
     @classmethod
-    def from_args(cls, *args :List[str]):
+    def from_args(cls, *args: str):
         parser = external_parser if external_parser is not None else ArgumentParser()
 
         for arg_name, arg_field in cls.__dataclass_fields__.items():

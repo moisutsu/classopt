@@ -12,7 +12,7 @@ class ClassOpt:
         return ArgumentParser()
 
     @classmethod
-    def from_args(cls: T, *args: List[str] ) -> T:
+    def from_args(cls: T, *args: str) -> T:
         parser = cls._parser_factory()
 
         for arg_name, arg_type in cls.__annotations__.items():
