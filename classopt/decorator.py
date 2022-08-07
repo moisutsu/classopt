@@ -1,7 +1,7 @@
 import typing
 from argparse import ArgumentParser
 from dataclasses import MISSING, Field, dataclass
-from typing import TYPE_CHECKING, overload, List
+from typing import TYPE_CHECKING, overload
 
 from classopt import config
 
