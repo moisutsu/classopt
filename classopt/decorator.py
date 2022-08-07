@@ -1,7 +1,7 @@
 import typing
 from argparse import ArgumentParser
 from dataclasses import MISSING, Field, dataclass
-from typing import TYPE_CHECKING, overload
+from typing import TYPE_CHECKING, overload, List
 
 from classopt import config
 
@@ -49,7 +49,7 @@ def _process_class(
     cls, default_long: bool, default_short: bool, external_parser: ArgumentParser
 ):
     @classmethod
-    def from_args(cls):
+    def from_args(cls, *args :List[str]):
         parser = external_parser if external_parser is not None else ArgumentParser()
 
         for arg_name, arg_field in cls.__dataclass_fields__.items():
@@ -112,8 +112,9 @@ def _process_class(
 
             parser.add_argument(*name_or_flags, **kwargs)
 
-        args = parser.parse_args()
-        return cls(**vars(args))
+        args_in = args if len(args) != 0 else None
+        ns  = parser.parse_args(args=args_in)
+        return cls(**vars(ns))
 
     for arg_name in cls.__annotations__.keys():
         if not hasattr(cls, arg_name):

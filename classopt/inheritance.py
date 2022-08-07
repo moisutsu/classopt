@@ -1,7 +1,7 @@
 import typing
 from argparse import ArgumentParser
 from dataclasses import dataclass
-from typing import TypeVar
+from typing import TypeVar, List
 
 T = TypeVar("T")
 
@@ -12,7 +12,7 @@ class ClassOpt:
         return ArgumentParser()
 
     @classmethod
-    def from_args(cls: T) -> T:
+    def from_args(cls: T, *args: List[str] ) -> T:
         parser = cls._parser_factory()
 
         for arg_name, arg_type in cls.__annotations__.items():
@@ -64,6 +64,7 @@ class ClassOpt:
 
             parser.add_argument(*name_or_flags, **kwargs)
 
-        args = parser.parse_args()
+        args_in = args if len(args) != 0 else None
+        ns = parser.parse_args(args=args_in)
 
-        return dataclass(cls)(**vars(args))
+        return dataclass(cls)(**vars(ns))
