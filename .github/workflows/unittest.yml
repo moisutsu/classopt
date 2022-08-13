@@ -11,6 +11,10 @@ jobs:
       matrix:
         os: ["ubuntu-20.04", "macos-12", "windows-2022"]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
+
+    env:
+      COVERAGE_FILE: report-${{ matrix.os }}-${{ matrix.python-version }}
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -29,3 +33,43 @@ jobs:
 
       - name: Run test
         run: poetry run pytest
+
+      - name: Archive coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.COVERAGE_FILE }}
+          path: ${{ env.COVERAGE_FILE }}
+
+  report:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: reports
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Set up coverage
+        run: |
+          ls -al
+          ls -al reports
+          pip install coverage
+
+      - name: Combine reports
+        run: |
+          ls -al
+          ls -al reports
+          coverage combine --rcfile=./tests/.coveragerc reports/*
+          coverage report --rcfile=./tests/.coveragerc | tee pytest-coverage.txt
+
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@main
+        with:
+          pytest-coverage-path: ./pytest-coverage.txt

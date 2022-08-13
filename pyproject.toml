@@ -8,10 +8,16 @@ repository = "https://github.com/moisutsu/classopt"
 
 [tool.poetry.dependencies]
 python = "^3.7"
+pytest-cov = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 black = "^21.6b0"
 pytest = "^6.2.4"
+
+
+[tool.pytest.ini_options]
+addopts = "--cov --cov-branch --cov-config=./tests/.coveragerc"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
