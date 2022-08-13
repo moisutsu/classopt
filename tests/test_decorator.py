@@ -4,6 +4,7 @@ from typing import List
 
 import pytest
 from classopt import classopt, config
+from .conftest import set_args
 
 
 class TestClassOpt(unittest.TestCase):
@@ -21,8 +22,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg_int == 5
         assert opt.arg_str == "hello"
         assert opt.arg_float == 3.2
-
-        del_args()
 
     def test_advanced_usage(self):
         @classopt()
@@ -57,8 +56,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.store_true
         assert opt.nargs == [1, 2, 3]
 
-        del_args()
-
     def test_default_long(self):
         @classopt(default_long=True)
         class Opt:
@@ -74,8 +71,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg1 == 3
         assert opt.arg2 == "hello"
 
-        del_args()
-
     def test_default_short(self):
         @classopt(default_long=True, default_short=True)
         class Opt:
@@ -89,8 +84,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.a_arg == 3
         assert opt.b_arg == "hello"
 
-        del_args()
-
     def test_generic_alias(self):
         @classopt(default_long=True)
         class Opt:
@@ -103,8 +96,6 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.list_a == [3, 2, 1]
         assert opt.list_b == ["hello", "world"]
-
-        del_args()
 
     @pytest.mark.skipif(
         sys.version_info < (3, 9),
@@ -123,11 +114,7 @@ class TestClassOpt(unittest.TestCase):
         assert opt.list_a == [3, 2, 1]
         assert opt.list_b == ["hello", "world"]
 
-        del_args()
-
     def test_default_value(self):
-        from typing import List
-
         @classopt(default_long=True)
         class Opt:
             numbers: List[int]
@@ -139,8 +126,6 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.numbers == [1, 2, 3]
         assert opt.flag
-
-        del_args()
 
     def test_external_parser(self):
         from argparse import ArgumentParser
@@ -166,14 +151,10 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg_str == "hello"
         assert opt.arg_float == 3.2
 
-        del_args()
-
         set_args("5", "hello")
 
         with self.assertRaises(userArgumentParserException):
             opt = Opt.from_args()
-
-        del_args()
 
     def test_simple_default_value_passing(self):
         @classopt(default_long=True)
@@ -196,8 +177,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg4 == [1, 2, 3]
         assert opt.arg5 == "hello"
 
-        del_args()
-
     def test_convert_default_value_type_to_specified_type(self):
         from pathlib import Path
 
@@ -210,15 +189,3 @@ class TestClassOpt(unittest.TestCase):
         opt = Opt.from_args()
 
         assert opt.arg0 == Path("test.py")
-
-        del_args()
-
-
-def set_args(*args):
-    del_args()  # otherwise tests fail with e.g. "pytest -s"
-    for arg in args:
-        sys.argv.append(arg)
-
-
-def del_args():
-    del sys.argv[1:]
