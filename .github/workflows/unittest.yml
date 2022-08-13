@@ -13,7 +13,7 @@ jobs:
         python-version: ["3.7", "3.8", "3.9", "3.10"]
 
     env:
-      COVERAGE_FILE: report-${{ matrix.os }}-${{ matrix.python-version }}
+      COVERAGE_FILE: .coverage_${{ matrix.os }}_${{ matrix.python-version }}
 
     steps:
       - uses: actions/checkout@v3
@@ -31,8 +31,8 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
 
-      - name: Run test
-        run: poetry run pytest
+      - name: Run test and generate coverage report
+        run: poetry run pytest --verbose --cov=classopt --cov-report=term-missing:skip-covered --cov-config=pyproject.toml
 
       - name: Archive coverage results
         uses: actions/upload-artifact@v3
@@ -42,11 +42,11 @@ jobs:
 
   report:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
 
-      - name: Download all workflow run artifacts
+      - name: Download all workflow artifacts
         uses: actions/download-artifact@v3
         with:
           path: reports
@@ -58,18 +58,29 @@ jobs:
 
       - name: Set up coverage
         run: |
-          ls -al
-          ls -al reports
-          pip install coverage
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov coverage
 
       - name: Combine reports
-        run: |
-          ls -al
-          ls -al reports
-          coverage combine --rcfile=./tests/.coveragerc reports/*
-          coverage report --rcfile=./tests/.coveragerc | tee pytest-coverage.txt
+        run: coverage combine --keep ./reports/.coverage*/.coverage*
 
-      - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@main
+      - name: Report
+        run: coverage report --skip-covered --show-missing --skip-empty | tee coverage.txt
+
+      - name: XML
+        run: coverage xml
+
+      - name: Archive coverage results
+        uses: actions/upload-artifact@v3
         with:
-          pytest-coverage-path: ./pytest-coverage.txt
+          name: results
+          path: |
+            .coverage
+            coverage.txt
+            coverage.xml
+
+      - name: Python Coverage
+        uses: orgoro/coverage@v2
+        with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}

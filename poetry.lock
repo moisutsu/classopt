@@ -260,7 +260,7 @@ docs = ["rst.linker (>=1.9)", "jaraco.packaging (>=8.2)", "sphinx"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "6eec1f2e3843fb0cd852002d61913069c017ec8909cf990f2e98107fb8d8ee61"
+content-hash = "331351d19104e543e679fb5f24ea672c7d0f23a8f151bda08099c392a5ee8816"
 
 [metadata.files]
 appdirs = []

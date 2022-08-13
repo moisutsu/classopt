@@ -13,10 +13,28 @@ pytest-cov = "^3.0.0"
 [tool.poetry.dev-dependencies]
 black = "^21.6b0"
 pytest = "^6.2.4"
+coverage = {extras = ["toml"], version = "^6.4.3"}
 
 
-[tool.pytest.ini_options]
-addopts = "--cov --cov-branch --cov-config=./tests/.coveragerc"
+[tool.coverage.run]
+parallel = true
+
+[tool.coverage.paths]
+source = [
+    "classopt",
+    "/home/runner/work/classopt/classopt/classopt", # for Linux
+    "/System/Volumes/Data/home/runner/work/classopt/classopt/classopt/", # for macOS
+    "/Users/runner/work/classopt/classopt/classopt", # for macOS
+    "D:\\a\\classopt\\classopt\\classopt", # windows
+]
+
+[tool.coverage.report]
+skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "@overload",
+    "if TYPE_CHECKING:",
+]
 
 
 [build-system]
