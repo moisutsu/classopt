@@ -226,7 +226,7 @@ class TestClassOpt(unittest.TestCase):
 
         del_args()
 
-        opt2 = Opt.from_args("5","hello","3.2")
+        opt2 = Opt.from_args(["5","hello","3.2"])
 
         assert opt1.arg_int == opt2.arg_int
         assert opt1.arg_str == opt2.arg_str
