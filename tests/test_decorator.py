@@ -141,7 +141,7 @@ class TestClassOpt(unittest.TestCase):
         assert opt.flag
 
         del_args()
-
+    
     def test_external_parser(self):
         from argparse import ArgumentParser
 
@@ -212,6 +212,25 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg0 == Path("test.py")
 
         del_args()
+    
+    def test_args_from_scipt(self):
+        @classopt
+        class Opt:
+            arg_int: int
+            arg_str: str
+            arg_float: float
+
+        set_args("5", "hello", "3.2")
+
+        opt1 = Opt.from_args()
+
+        del_args()
+
+        opt2 = Opt.from_args(["5","hello","3.2"])
+
+        assert opt1.arg_int == opt2.arg_int
+        assert opt1.arg_str == opt2.arg_str
+        assert opt1.arg_float == opt2.arg_float
 
 
 def set_args(*args):
