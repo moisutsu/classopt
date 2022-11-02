@@ -141,7 +141,7 @@ class TestClassOpt(unittest.TestCase):
         assert opt.flag
 
         del_args()
-    
+
     def test_external_parser(self):
         from argparse import ArgumentParser
 
@@ -212,7 +212,7 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg0 == Path("test.py")
 
         del_args()
-    
+
     def test_args_from_scipt(self):
         @classopt
         class Opt:
@@ -226,11 +226,68 @@ class TestClassOpt(unittest.TestCase):
 
         del_args()
 
-        opt2 = Opt.from_args(["5","hello","3.2"])
+        opt2 = Opt.from_args(["5", "hello", "3.2"])
 
         assert opt1.arg_int == opt2.arg_int
         assert opt1.arg_str == opt2.arg_str
         assert opt1.arg_float == opt2.arg_float
+
+    def test_to_dict(self):
+        from pathlib import Path
+        from typing import List
+
+        @classopt
+        class Opt:
+            arg_int: int
+            arg_float: float
+            arg_path: Path
+            arg_list: List[str]
+
+        set_args("3", "3.2", "test.txt", "a", "b", "c")
+
+        opt = Opt.from_args()
+
+        opt_dict = opt.to_dict()
+        correct_dict = {
+            "arg_int": 3,
+            "arg_float": 3.2,
+            "arg_path": Path("test.txt"),
+            "arg_list": ["a", "b", "c"],
+        }
+
+        assert all(
+            opt_dict[key] == correct_dict[key]
+            for key in set(list(opt_dict.keys()) + list(correct_dict.keys()))
+        )
+
+        del_args()
+
+    def test_from_dict(self):
+        from pathlib import Path
+        from typing import List
+
+        @classopt
+        class Opt:
+            arg_int: int
+            arg_float: float
+            arg_path: Path
+            arg_list: List[str]
+
+        args_dict = {
+            "arg_int": 3,
+            "arg_float": 3.2,
+            "arg_path": Path("test.txt"),
+            "arg_list": ["a", "b", "c"],
+        }
+
+        opt = Opt.from_dict(args_dict)
+
+        assert opt.arg_int == args_dict["arg_int"]
+        assert opt.arg_float == args_dict["arg_float"]
+        assert opt.arg_path == args_dict["arg_path"]
+        assert opt.arg_list == args_dict["arg_list"]
+
+        del_args()
 
 
 def set_args(*args):

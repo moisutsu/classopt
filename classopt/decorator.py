@@ -1,7 +1,7 @@
 import typing
 from argparse import ArgumentParser
-from dataclasses import MISSING, Field, dataclass
-from typing import TYPE_CHECKING, overload, Optional, List
+from dataclasses import MISSING, Field, dataclass, asdict
+from typing import TYPE_CHECKING, List, Optional, overload
 
 from classopt import config
 
@@ -14,6 +14,13 @@ if TYPE_CHECKING:
     class _ClassOptGeneric(Generic[_T]):
         @classmethod
         def from_args(cls) -> _T:
+            ...
+
+        def to_dict(self) -> dict:
+            ...
+
+        @classmethod
+        def from_dict(cls, data: dict) -> _T:
             ...
 
 
@@ -112,7 +119,7 @@ def _process_class(
 
             parser.add_argument(*name_or_flags, **kwargs)
 
-        ns  = parser.parse_args(args=args)
+        ns = parser.parse_args(args=args)
         return cls(**vars(ns))
 
     for arg_name in cls.__annotations__.keys():
@@ -122,5 +129,16 @@ def _process_class(
             setattr(cls, arg_name, config(default=getattr(cls, arg_name)))
 
     setattr(cls, "from_args", from_args)
+
+    def to_dict(self):
+        return asdict(self)
+
+    setattr(cls, "to_dict", to_dict)
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(**data)
+
+    setattr(cls, "from_dict", from_dict)
 
     return dataclass(cls)

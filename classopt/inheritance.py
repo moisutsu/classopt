@@ -5,6 +5,7 @@ from typing import TypeVar, Optional, List
 
 T = TypeVar("T")
 
+
 class ClassOpt:
     @classmethod
     def _parser_factory(cls: T) -> ArgumentParser:
