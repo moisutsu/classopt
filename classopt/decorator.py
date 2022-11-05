@@ -1,7 +1,22 @@
+import json
+import os
 import typing
 from argparse import ArgumentParser
 from dataclasses import MISSING, Field, asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, overload
+from json import JSONDecoder, JSONEncoder
+from pathlib import Path
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+    overload,
+)
 
 from classopt import config
 from classopt.utils import (
@@ -26,6 +41,36 @@ if TYPE_CHECKING:
 
         @classmethod
         def from_dict(cls, data: dict) -> _T:
+            ...
+
+        def to_json(
+            self,
+            save_path: Union[str, os.PathLike, None],
+            skipkeys: bool = False,
+            ensure_ascii: bool = True,
+            check_circular: bool = True,
+            allow_nan: bool = True,
+            cls: Optional[Type[JSONEncoder]] = None,
+            indent: Union[int, str, None] = None,
+            separators: Optional[Tuple[str, str]] = None,
+            default: Optional[Callable[[Any], Any]] = None,
+            sort_keys: bool = False,
+            **kwargs,
+        ) -> str:
+            ...
+
+        @classmethod
+        def from_json(
+            cls,
+            json_content_or_path: Union[str, bytes, os.PathLike],
+            cls_: Optional[Type[JSONDecoder]] = None,
+            object_hook: Optional[Callable[[dict], Any]] = None,
+            parse_float: Optional[Callable[[str], Any]] = None,
+            parse_int: Optional[Callable[[str], Any]] = None,
+            parse_constant: Optional[Callable[[str], Any]] = None,
+            object_pairs_hook: Optional[Callable[[List[tuple]], Any]] = None,
+            **kwargs,
+        ) -> _T:
             ...
 
 
@@ -153,5 +198,75 @@ def _process_class(
         return cls(**reverted_data)
 
     setattr(cls, "from_dict", from_dict)
+
+    def to_json(
+        self,
+        save_path: Union[str, os.PathLike, None] = None,
+        skipkeys: bool = False,
+        ensure_ascii: bool = True,
+        check_circular: bool = True,
+        allow_nan: bool = True,
+        cls: Optional[Type[JSONEncoder]] = None,
+        indent: Union[int, str, None] = None,
+        separators: Optional[Tuple[str, str]] = None,
+        default: Optional[Callable[[Any], Any]] = None,
+        sort_keys: bool = False,
+        **kwargs,
+    ) -> str:
+        json_content = json.dumps(
+            obj=self.to_dict(),
+            skipkeys=skipkeys,
+            ensure_ascii=ensure_ascii,
+            check_circular=check_circular,
+            allow_nan=allow_nan,
+            cls=cls,
+            indent=indent,
+            separators=separators,
+            default=default,
+            sort_keys=sort_keys,
+            **kwargs,
+        )
+
+        if not save_path is None:
+            Path(save_path).write_text(json_content)
+
+        return json_content
+
+    setattr(cls, "to_json", to_json)
+
+    @classmethod
+    def from_json(
+        cls,
+        json_content_or_path: Union[str, bytes, os.PathLike],
+        cls_: Optional[Type[JSONDecoder]] = None,
+        object_hook: Optional[Callable[[dict], Any]] = None,
+        parse_float: Optional[Callable[[str], Any]] = None,
+        parse_int: Optional[Callable[[str], Any]] = None,
+        parse_constant: Optional[Callable[[str], Any]] = None,
+        object_pairs_hook: Optional[Callable[[List[tuple]], Any]] = None,
+        **kwargs,
+    ):
+        if not isinstance(json_content_or_path, bytes) and (
+            isinstance(json_content_or_path, os.PathLike)
+            or Path(json_content_or_path).exists()
+        ):
+            json_content = Path(json_content_or_path).read_text()
+        else:
+            json_content = json_content_or_path
+
+        return cls.from_dict(
+            json.loads(
+                s=json_content,
+                cls=cls_,
+                object_hook=object_hook,
+                parse_float=parse_float,
+                parse_int=parse_int,
+                parse_constant=parse_constant,
+                object_pairs_hook=object_pairs_hook,
+                **kwargs,
+            )
+        )
+
+    setattr(cls, "from_json", from_json)
 
     return dataclass(cls)
