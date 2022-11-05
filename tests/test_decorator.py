@@ -3,6 +3,7 @@ import unittest
 from typing import List
 
 import pytest
+
 from classopt import classopt, config
 
 
@@ -284,8 +285,69 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.arg_int == args_dict["arg_int"]
         assert opt.arg_float == args_dict["arg_float"]
-        assert opt.arg_path == args_dict["arg_path"]
         assert opt.arg_list == args_dict["arg_list"]
+
+        del_args()
+
+    def test_to_json(self):
+        import tempfile
+        from pathlib import Path
+        from typing import List
+
+        @classopt
+        class Opt:
+            arg_int: int
+            arg_float: float
+            arg_list: List[str]
+
+        set_args("3", "3.2", "a", "b", "c")
+
+        opt = Opt.from_args()
+
+        correct_json = (
+            """{"arg_int": 3, "arg_float": 3.2, "arg_list": ["a", "b", "c"]}"""
+        )
+
+        opt_json = opt.to_json()
+
+        assert opt_json == correct_json
+
+        temp_path = Path(tempfile.mkdtemp()) / "test.json"
+        opt.to_json(temp_path)
+
+        assert temp_path.read_text() == correct_json
+
+        del_args()
+
+    def test_from_json(self):
+        import tempfile
+        from pathlib import Path
+        from typing import List
+
+        @classopt
+        class Opt:
+            arg_int: int
+            arg_float: float
+            arg_list: List[str]
+
+        content_json = (
+            """{"arg_int": 3, "arg_float": 3.2, "arg_list": ["a", "b", "c"]}"""
+        )
+
+        opt = Opt.from_json(content_json)
+
+        assert opt.arg_int == 3
+        assert opt.arg_float == 3.2
+        assert opt.arg_list == ["a", "b", "c"]
+
+        temp_path = Path(tempfile.mkdtemp()) / "test.json"
+        temp_path.write_text(content_json)
+
+        opt = Opt.from_json(temp_path)
+
+        assert opt.arg_int == 3
+        assert opt.arg_float == 3.2
+        assert opt.arg_list == ["a", "b", "c"]
 
         del_args()
 
