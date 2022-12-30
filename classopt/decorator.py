@@ -1,9 +1,14 @@
 import typing
 from argparse import ArgumentParser
-from dataclasses import MISSING, Field, dataclass, asdict
-from typing import TYPE_CHECKING, List, Optional, overload
+from dataclasses import MISSING, Field, asdict, dataclass
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, overload
 
 from classopt import config
+from classopt.utils import (
+    GENERIC_ALIASES,
+    convert_non_primitives_to_string,
+    revert_non_primitives_from_string,
+)
 
 if TYPE_CHECKING:
     from typing import Callable, Generic, Literal, Type, TypeVar, Union
@@ -99,15 +104,8 @@ def _process_class(
             elif arg_field.default_factory != MISSING:
                 kwargs["default"] = arg_field.type(arg_field.default_factory())
 
-            generic_aliases = [typing._GenericAlias]
-            try:
-                from types import GenericAlias
-
-                generic_aliases.append(GenericAlias)
-            except ImportError:
-                pass
             if (
-                type(arg_field.type) in generic_aliases
+                type(arg_field.type) in GENERIC_ALIASES
                 and arg_field.type.__origin__ == list
             ):
                 kwargs["type"] = arg_field.type.__args__[0]
@@ -131,13 +129,28 @@ def _process_class(
     setattr(cls, "from_args", from_args)
 
     def to_dict(self):
-        return asdict(self)
+        def classopt_dict_factory(items: List[Tuple[str, Any]]) -> Dict[str, Any]:
+            converted_dict = {
+                key: convert_non_primitives_to_string(value) for key, value in items
+            }
+
+            return converted_dict
+
+        return asdict(self, dict_factory=classopt_dict_factory)
 
     setattr(cls, "to_dict", to_dict)
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(**data)
+        reverted_data = {
+            key: revert_non_primitives_from_string(
+                value, original_type=cls.__annotations__[key]
+            )
+            for key, value in data.items()
+            if key in cls.__annotations__
+        }
+
+        return cls(**reverted_data)
 
     setattr(cls, "from_dict", from_dict)
 
