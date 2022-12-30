@@ -3,6 +3,7 @@ import unittest
 from typing import List
 
 import pytest
+
 from classopt import classopt, config
 
 
@@ -251,7 +252,7 @@ class TestClassOpt(unittest.TestCase):
         correct_dict = {
             "arg_int": 3,
             "arg_float": 3.2,
-            "arg_path": Path("test.txt"),
+            "arg_path": "test.txt",
             "arg_list": ["a", "b", "c"],
         }
 
@@ -276,7 +277,7 @@ class TestClassOpt(unittest.TestCase):
         args_dict = {
             "arg_int": 3,
             "arg_float": 3.2,
-            "arg_path": Path("test.txt"),
+            "arg_path": "test.txt",
             "arg_list": ["a", "b", "c"],
         }
 
@@ -284,7 +285,7 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.arg_int == args_dict["arg_int"]
         assert opt.arg_float == args_dict["arg_float"]
-        assert opt.arg_path == args_dict["arg_path"]
+        assert opt.arg_path == Path(args_dict["arg_path"])
         assert opt.arg_list == args_dict["arg_list"]
 
         del_args()
