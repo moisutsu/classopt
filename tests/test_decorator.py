@@ -300,14 +300,13 @@ class TestClassOpt(unittest.TestCase):
             arg_int: int
             arg_float: float
             arg_list: List[str]
+            arg_path: Path
 
-        set_args("3", "3.2", "a", "b", "c")
+        set_args("3", "3.2", "a", "b", "c", "test.txt")
 
         opt = Opt.from_args()
 
-        correct_json = (
-            """{"arg_int": 3, "arg_float": 3.2, "arg_list": ["a", "b", "c"]}"""
-        )
+        correct_json = """{"arg_int": 3, "arg_float": 3.2, "arg_list": ["a", "b", "c"], "arg_path": "test.txt"}"""
 
         opt_json = opt.to_json()
 
@@ -330,16 +329,16 @@ class TestClassOpt(unittest.TestCase):
             arg_int: int
             arg_float: float
             arg_list: List[str]
+            arg_path: Path
 
-        content_json = (
-            """{"arg_int": 3, "arg_float": 3.2, "arg_list": ["a", "b", "c"]}"""
-        )
+        content_json = """{"arg_int": 3, "arg_float": 3.2, "arg_list": ["a", "b", "c"], "arg_path": "test.txt"}"""
 
         opt = Opt.from_json(content_json)
 
         assert opt.arg_int == 3
         assert opt.arg_float == 3.2
         assert opt.arg_list == ["a", "b", "c"]
+        assert opt.arg_path == Path("test.txt")
 
         temp_path = Path(tempfile.mkdtemp()) / "test.json"
         temp_path.write_text(content_json)
@@ -349,6 +348,7 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg_int == 3
         assert opt.arg_float == 3.2
         assert opt.arg_list == ["a", "b", "c"]
+        assert opt.arg_path == Path("test.txt")
 
         del_args()
 

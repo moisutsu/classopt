@@ -121,7 +121,7 @@ class TestClassOpt(unittest.TestCase):
             opt = Opt.from_args()
 
         del_args()
-    
+
     def test_args_from_script(self):
         class Opt(ClassOpt):
             arg_int: int
@@ -134,12 +134,11 @@ class TestClassOpt(unittest.TestCase):
 
         del_args()
 
-        opt2 = Opt.from_args(["5","hello","3.2"])
+        opt2 = Opt.from_args(["5", "hello", "3.2"])
 
         assert opt1.arg_int == opt2.arg_int
         assert opt1.arg_str == opt2.arg_str
         assert opt1.arg_float == opt2.arg_float
-
 
 
 def set_args(*args):
