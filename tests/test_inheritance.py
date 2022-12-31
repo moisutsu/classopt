@@ -1,8 +1,9 @@
-import sys
 import unittest
 from typing import List
 
 from classopt import ClassOpt, config
+
+from .conftest import del_args, set_args
 
 
 class TestClassOpt(unittest.TestCase):
@@ -19,8 +20,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg_int == 5
         assert opt.arg_str == "hello"
         assert opt.arg_float == 3.2
-
-        del_args()
 
     def test_advanced_usage(self):
         class Opt(ClassOpt):
@@ -54,8 +53,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.store_true
         assert opt.nargs == [1, 2, 3]
 
-        del_args()
-
     def test_generic_alias(self):
         class Opt(ClassOpt):
             list_a: List[int] = config(long=True, nargs="+")
@@ -68,11 +65,7 @@ class TestClassOpt(unittest.TestCase):
         assert opt.list_a == [3, 2, 1]
         assert opt.list_b == ["hello", "world"]
 
-        del_args()
-
     def test_default_value(self):
-        from typing import List
-
         class Opt(ClassOpt):
             numbers: List[int] = config(long=True)
             flag: bool = config(long=True)
@@ -83,8 +76,6 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.numbers == [1, 2, 3]
         assert opt.flag
-
-        del_args()
 
     def test_external_parser(self):
         from argparse import ArgumentParser
@@ -113,15 +104,11 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg_str == "hello"
         assert opt.arg_float == 3.2
 
-        del_args()
-
         set_args("5", "hello")
 
         with self.assertRaises(userArgumentParserException):
             opt = Opt.from_args()
 
-        del_args()
-    
     def test_args_from_script(self):
         class Opt(ClassOpt):
             arg_int: int
@@ -134,18 +121,8 @@ class TestClassOpt(unittest.TestCase):
 
         del_args()
 
-        opt2 = Opt.from_args(["5","hello","3.2"])
+        opt2 = Opt.from_args(["5", "hello", "3.2"])
 
         assert opt1.arg_int == opt2.arg_int
         assert opt1.arg_str == opt2.arg_str
         assert opt1.arg_float == opt2.arg_float
-
-
-
-def set_args(*args):
-    for arg in args:
-        sys.argv.append(arg)
-
-
-def del_args():
-    del sys.argv[1:]
