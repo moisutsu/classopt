@@ -102,7 +102,9 @@ def classopt(cls=None, default_long=False, default_short=False, parser=None):
     return wrap(cls)
 
 
-def _process_class(cls, default_long: bool, default_short: bool, external_parser: ArgumentParser):
+def _process_class(
+    cls, default_long: bool, default_short: bool, external_parser: ArgumentParser
+):
     @classmethod
     def from_args(cls, args: Optional[List[str]] = None):
         parser = external_parser if external_parser is not None else ArgumentParser()
@@ -147,7 +149,10 @@ def _process_class(cls, default_long: bool, default_short: bool, external_parser
             elif arg_field.default_factory != MISSING:
                 kwargs["default"] = arg_field.type(arg_field.default_factory())
 
-            if type(arg_field.type) in GENERIC_ALIASES and arg_field.type.__origin__ == list:
+            if (
+                type(arg_field.type) in GENERIC_ALIASES
+                and arg_field.type.__origin__ == list
+            ):
                 kwargs["type"] = arg_field.type.__args__[0]
                 if not "nargs" in arg_field.metadata:
                     kwargs["nargs"] = "*"
@@ -170,7 +175,9 @@ def _process_class(cls, default_long: bool, default_short: bool, external_parser
 
     def to_dict(self):
         def classopt_dict_factory(items: List[Tuple[str, Any]]) -> Dict[str, Any]:
-            converted_dict = {key: convert_non_primitives_to_string(value) for key, value in items}
+            converted_dict = {
+                key: convert_non_primitives_to_string(value) for key, value in items
+            }
 
             return converted_dict
 
@@ -181,7 +188,9 @@ def _process_class(cls, default_long: bool, default_short: bool, external_parser
     @classmethod
     def from_dict(cls, data: dict):
         reverted_data = {
-            key: revert_non_primitives_from_string(value, original_type=cls.__annotations__[key])
+            key: revert_non_primitives_from_string(
+                value, original_type=cls.__annotations__[key]
+            )
             for key, value in data.items()
             if key in cls.__annotations__
         }

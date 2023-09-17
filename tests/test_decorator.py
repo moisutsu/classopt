@@ -330,7 +330,6 @@ class TestClassOpt(unittest.TestCase):
 
         del_args()
 
-
         args_dict = {
             "arg_int": 3,
             "arg_float": 3.2,

@@ -109,7 +109,6 @@ class TestClassOpt(unittest.TestCase):
         with self.assertRaises(userArgumentParserException):
             opt = Opt.from_args()
 
-
     def test_args_from_script(self):
         class Opt(ClassOpt):
             arg_int: int
