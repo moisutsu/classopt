@@ -6,6 +6,8 @@ import pytest
 
 from classopt import classopt, config
 
+from .conftest import del_args, set_args
+
 
 class TestClassOpt(unittest.TestCase):
     def test_classopt(self):
@@ -22,8 +24,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg_int == 5
         assert opt.arg_str == "hello"
         assert opt.arg_float == 3.2
-
-        del_args()
 
     def test_advanced_usage(self):
         @classopt()
@@ -58,8 +58,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.store_true
         assert opt.nargs == [1, 2, 3]
 
-        del_args()
-
     def test_default_long(self):
         @classopt(default_long=True)
         class Opt:
@@ -75,8 +73,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg1 == 3
         assert opt.arg2 == "hello"
 
-        del_args()
-
     def test_default_short(self):
         @classopt(default_long=True, default_short=True)
         class Opt:
@@ -90,8 +86,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.a_arg == 3
         assert opt.b_arg == "hello"
 
-        del_args()
-
     def test_generic_alias(self):
         @classopt(default_long=True)
         class Opt:
@@ -104,8 +98,6 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.list_a == [3, 2, 1]
         assert opt.list_b == ["hello", "world"]
-
-        del_args()
 
     @pytest.mark.skipif(
         sys.version_info < (3, 9),
@@ -124,11 +116,7 @@ class TestClassOpt(unittest.TestCase):
         assert opt.list_a == [3, 2, 1]
         assert opt.list_b == ["hello", "world"]
 
-        del_args()
-
     def test_default_value(self):
-        from typing import List
-
         @classopt(default_long=True)
         class Opt:
             numbers: List[int]
@@ -140,8 +128,6 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.numbers == [1, 2, 3]
         assert opt.flag
-
-        del_args()
 
     def test_external_parser(self):
         from argparse import ArgumentParser
@@ -167,14 +153,10 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg_str == "hello"
         assert opt.arg_float == 3.2
 
-        del_args()
-
         set_args("5", "hello")
 
         with self.assertRaises(userArgumentParserException):
             opt = Opt.from_args()
-
-        del_args()
 
     def test_simple_default_value_passing(self):
         @classopt(default_long=True)
@@ -197,8 +179,6 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg4 == [1, 2, 3]
         assert opt.arg5 == "hello"
 
-        del_args()
-
     def test_convert_default_value_type_to_specified_type(self):
         from pathlib import Path
 
@@ -211,8 +191,6 @@ class TestClassOpt(unittest.TestCase):
         opt = Opt.from_args()
 
         assert opt.arg0 == Path("test.py")
-
-        del_args()
 
     def test_args_from_scipt(self):
         @classopt
@@ -261,8 +239,6 @@ class TestClassOpt(unittest.TestCase):
             for key in set(list(opt_dict.keys()) + list(correct_dict.keys()))
         )
 
-        del_args()
-
     def test_from_dict(self):
         from pathlib import Path
         from typing import List
@@ -288,7 +264,9 @@ class TestClassOpt(unittest.TestCase):
         assert opt.arg_path == Path(args_dict["arg_path"])
         assert opt.arg_list == args_dict["arg_list"]
 
-        del_args()
+    def test_from_dict_partial(self):
+        from pathlib import Path
+        from typing import List, Set
 
     def test_to_json(self):
         import tempfile
@@ -353,11 +331,16 @@ class TestClassOpt(unittest.TestCase):
         del_args()
 
 
-def set_args(*args):
-    del_args()  # otherwise tests fail with e.g. "pytest -s"
-    for arg in args:
-        sys.argv.append(arg)
+        args_dict = {
+            "arg_int": 3,
+            "arg_float": 3.2,
+        }
 
+        opt = Opt.from_dict(args_dict)
 
-def del_args():
-    del sys.argv[1:]
+        assert opt.arg_int == args_dict["arg_int"]
+        assert opt.arg_float == args_dict["arg_float"]
+        assert opt.arg_str == "test"
+        assert opt.arg_path == Path("test.txt")
+        assert opt.arg_list == ["a", "b"]
+        assert opt.arg_set == {"a", "b"}

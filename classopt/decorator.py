@@ -102,9 +102,7 @@ def classopt(cls=None, default_long=False, default_short=False, parser=None):
     return wrap(cls)
 
 
-def _process_class(
-    cls, default_long: bool, default_short: bool, external_parser: ArgumentParser
-):
+def _process_class(cls, default_long: bool, default_short: bool, external_parser: ArgumentParser):
     @classmethod
     def from_args(cls, args: Optional[List[str]] = None):
         parser = external_parser if external_parser is not None else ArgumentParser()
@@ -149,10 +147,7 @@ def _process_class(
             elif arg_field.default_factory != MISSING:
                 kwargs["default"] = arg_field.type(arg_field.default_factory())
 
-            if (
-                type(arg_field.type) in GENERIC_ALIASES
-                and arg_field.type.__origin__ == list
-            ):
+            if type(arg_field.type) in GENERIC_ALIASES and arg_field.type.__origin__ == list:
                 kwargs["type"] = arg_field.type.__args__[0]
                 if not "nargs" in arg_field.metadata:
                     kwargs["nargs"] = "*"
@@ -175,9 +170,7 @@ def _process_class(
 
     def to_dict(self):
         def classopt_dict_factory(items: List[Tuple[str, Any]]) -> Dict[str, Any]:
-            converted_dict = {
-                key: convert_non_primitives_to_string(value) for key, value in items
-            }
+            converted_dict = {key: convert_non_primitives_to_string(value) for key, value in items}
 
             return converted_dict
 
@@ -188,14 +181,26 @@ def _process_class(
     @classmethod
     def from_dict(cls, data: dict):
         reverted_data = {
-            key: revert_non_primitives_from_string(
-                value, original_type=cls.__annotations__[key]
-            )
+            key: revert_non_primitives_from_string(value, original_type=cls.__annotations__[key])
             for key, value in data.items()
             if key in cls.__annotations__
         }
 
-        return cls(**reverted_data)
+        default_data = {}
+        for arg_name, arg_field in cls.__dataclass_fields__.items():
+            if arg_name in reverted_data:
+                continue
+            if (
+                arg_field.default == MISSING and arg_field.default_factory == MISSING
+            ) or arg_field.default is None:
+                default_data[arg_name] = None
+            elif arg_field.default != MISSING:
+                default_data[arg_name] = arg_field.type(arg_field.default)
+            elif arg_field.default_factory != MISSING:
+                type_ = arg_field.type.__origin__
+                default_data[arg_name] = type_(arg_field.default_factory())
+
+        return cls(**default_data, **reverted_data)
 
     setattr(cls, "from_dict", from_dict)
 
