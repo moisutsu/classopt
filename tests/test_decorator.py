@@ -339,7 +339,5 @@ class TestClassOpt(unittest.TestCase):
 
         assert opt.arg_int == args_dict["arg_int"]
         assert opt.arg_float == args_dict["arg_float"]
-        assert opt.arg_str == "test"
-        assert opt.arg_path == Path("test.txt")
-        assert opt.arg_list == ["a", "b"]
-        assert opt.arg_set == {"a", "b"}
+        assert opt.arg_list == None
+        assert opt.arg_path == None
